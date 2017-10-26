@@ -19,14 +19,17 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+    I found a lot of help with this tag example
+        https://github.com/nicfit/eyed3/blob/master/examples/tag_example.py
+
 """
 
 import argparse
 import configparser
 import sys
 import os
-from subprocess import call
-from subprocess import run
+## from subprocess import call
+## from subprocess import run
 import subprocess
 from time import gmtime, strftime
 import eyed3
@@ -103,8 +106,12 @@ def radio_stream_recording(args):
         print('Unkown Recording directoy: ')
         sys.exit()
 
+    recording_date = strftime("%Y-%m-%d_%H-%M", gmtime())
+    ## file = '%s-%s-(%s - %s)' % (args.station, \
+    ##                            strftime("%Y-%m-%d_%H-%M", gmtime()),
+    ##                            args.artist, args.album)
     file = '%s-%s-(%s - %s)' % (args.station, \
-                                strftime("%Y-%m-%d_%H-%M", gmtime()),
+                                recording_date,
                                 args.artist, args.album)
     mp3_file = file + '.mp3'
     log_file = file + '.log'
@@ -126,9 +133,9 @@ def radio_stream_recording(args):
 
     # Uebergabe des Kommandos und der Parameter muss als Liste erfolgen
     try:
-    ## call(cmd, shell=False, timeout=20)
-        ### call(cmd, shell=False, timeout=(args.duration * 60))
-        t = subprocess.check_output(cmd, shell=False, stderr=subprocess.STDOUT, timeout=(args.duration * 60))
+        t = subprocess.check_output(cmd, shell=False,
+                                    stderr=subprocess.STDOUT,
+                                    timeout=(args.duration * 60))
     except subprocess.TimeoutExpired as e:
         print('recording is finished')
         print(e)
@@ -136,36 +143,45 @@ def radio_stream_recording(args):
     icy_tags = icy_tag(cvlclog)
     recording_log(log_file, args.station, args.album, args.artist, icy_tags)
 
-    # ToDo: 20.10.2017 In function auslagern
+    set_mp3_tags(mp3_file, args.artist, args.album, recording_date, streamurl)
+
+
+def set_mp3_tags(mp3_file, artist, album, recording_date, url):
+    """
+        Set some tags for recorded mp3 file
+
+        recording_date has date and time YYYY-MM-DD_HH-MM-SS
+    """
+
     audiofile = eyed3.load(mp3_file)
     if audiofile.tag is None:
         audiofile.initTag()
-        ## audiofile.tag.save()
 
-    audiofile.tag.artist = args.artist
-    audiofile.tag.album = args.album
-    audiofile.tag.album_artist = args.artist
-    audiofile.tag.title = args.album + ' - ' + args.artist
-    audiofile.tag.track_num = (1,1)
-    audiofile.tag.recording_date=2017
-    audiofile.tag.original_release_date = "1994-04-07"
-    audiofile.tag.release_date = "1994-04-07"
-    audiofile.tag.encoding_date = "2002-03"
-    audiofile.tag.recording_date = 1996
-    audiofile.tag.tagging_date = "2012-2-5"
-    audiofile.tag.comments.set(u"Gritty, yo!")
-    audiofile.tag.comments.set(u"Brownsville, Brooklyn", u"Origin")
+    audiofile.tag.artist = artist
+    audiofile.tag.album = album
+    audiofile.tag.album_artist = artist
+    audiofile.tag.title = album + ' - ' + artist
+    audiofile.tag.track_num = (1, 1)
+    ## audiofile.tag.recording_date = 2017
+    audiofile.tag.recording_date = recording_date[:4]
+    audiofile.tag.original_release_date = recording_date[:10]
+    audiofile.tag.release_date = recording_date[:10]
+    audiofile.tag.encoding_date = recording_date[:10]
+    audiofile.tag.tagging_date = recording_date[:10]
+    audiofile.tag.comments.set(os.getenv('USER', '????'), u'User')
+    ## audiofile.tag.comments.set(u"Brownsville, Brooklyn", u"Origin")
+    audiofile.tag.comments.set(recording_date, u'Recording Time')
     audiofile.tag.user_text_frames.set(u"****", u"Rating")
-    audiofile.tag.internet_radio_url=b'http://wdr3.de'
+    audiofile.tag.internet_radio_url = bytes(url, 'utf-8')
+
     ## print(audiofile.version)
-    print(audiofile.tag)
-    l = dir(audiofile.tag)
-    print(l)
+    ## print(audiofile.tag)
+
+    print(dir(audiofile.tag))
     for p in sys.path:
         print(p)
     audiofile.tag.save()
-
-
+    print(audiofile.tag.version)
 
 def remove_log(log):
     """ remove logfile because cvlc appends log.
@@ -198,7 +214,7 @@ def recording_log(log, station, album, artist, tags):
     file.close()
 
 def list(args):
-    """ 
+    """
         list all radio stations in settings.ini
     """
 
@@ -238,8 +254,9 @@ def main():
     #   --artist                 set ID-Tag artist
     # -----------------------------------------------------------------
 
-    parser = argparse.ArgumentParser(description='This program records internet radio streams. '
-                                                 'It is free software and comes with ABSOLUTELY NO WARRANTY.')
+    parser = argparse.ArgumentParser(
+        description='This program records internet radio streams. '
+        'It is free software and comes with ABSOLUTELY NO WARRANTY.')
 
     subparsers = parser.add_subparsers(help='sub-command help')
 

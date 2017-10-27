@@ -4,6 +4,7 @@ core debug: Copyright © 1996-2016 the VideoLAN team
 core debug: revision 2.2.2-0-g6259d80
 core debug: configured with ./configure  '--build=x86_64-linux-gnu' '--prefix=/usr' '--includedir=${prefix}/include' '--mandir=${prefix}/share/man' '--infodir=${prefix}/share/info' '--sysconfdir=/etc' '--localstatedir=/var' '--disable-silent-rules' '--libdir=${prefix}/lib/x86_64-linux-gnu' '--libexecdir=${prefix}/lib/x86_64-linux-gnu' '--disable-maintainer-mode' '--disable-dependency-tracking' '--config-cache' '--disable-update-check' '--enable-fast-install' '--docdir=/usr/share/doc/vlc-data' '--libdir=/usr/lib' '--with-binary-version=2.2.2-5ubuntu0.16.04.4' '--enable-a52' '--enable-aa' '--enable-bluray' '--enable-bonjour' '--enable-caca' '--enable-chromaprint' '--enable-dbus' '--enable-dca' '--enable-directfb' '--enable-dvbpsi' '--enable-dvdnav' '--enable-faad' '--enable-flac' '--enable-fluidsynth' '--enable-freerdp' '--enable-freetype' '--enable-fribidi' '--disable-gles1' '--enable-gles2' '--enable-gnutls' '--enable-jack' '--enable-kate' '--enable-libass' '--enable-libmpeg2' '--enable-libxml2' '--enable-lirc' '--enable-live555' '--enable-mad' '--enable-mkv' '--enable-mod' '--enable-mpc' '--enable-mtp' '--enable-mux_ogg' '--enable-ncurses' '--enable-notify' '--enable-ogg' '--enable-opus' '--enable-pulse' '--enable-qt' '--enable-realrtsp' '--enable-samplerate' '--enable-schroedinger' '--enable-sdl' '--enable-sdl-image' '--enable-sftp' '--enable-shine' '--enable-shout' '--enable-skins2' '--enable-speex' '--enable-svg' '--enable-svgdec' '--enable-taglib' '--enable-theora' '--enable-twolame' '--enable-upnp' '--enable-vcdx' '--enable-vdpau' '--enable-vnc' '--enable-vorbis' '--enable-x264' '--enable-x265' '--enable-zvbi' '--with-kde-solid=/usr/share/kde4/apps/solid/actions/' '--disable-decklink' '--disable-dxva2' '--disable-fdkaac' '--disable-gnomevfs' '--disable-goom' '--disable-libtar' '--disable-mfx' '--disable-opencv' '--disable-projectm' '--disable-sndio' '--disable-telx' '--disable-vpx' '--disable-vsxu' '--disable-wasapi' '--enable-alsa' '--enable-atmo' '--enable-dc1394' '--enable-dv1394' '--enable-linsys' '--enable-omxil' '--enable-udev' '--enable-v4l2' '--enable-libva' '--enable-vcd' '--enable-smbclient' '--disable-oss' '--enable-crystalhd' '--enable-mmx' '--enable-sse' '--disable-neon' '--disable-altivec' 'build_alias=x86_64-linux-gnu' 'CFLAGS=-g -O2 -fstack-protector-strong -Wformat -Werror=format-security ' 'LDFLAGS=-Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,--as-needed' 'CPPFLAGS=-Wdate-time -D_FORTIFY_SOURCE=2' 'CXXFLAGS=-g -O2 -fstack-protector-strong -Wformat -Werror=format-security ' 'OBJCFLAGS=-g -O2 -fstack-protector-strong -Wformat -Werror=format-security'
 core debug: using interface module "logger"
+lua: Lua HTTP interface
 core debug: looking for interface module matching "logger,none": 19 candidates
 logger: using logger.
 logger debug: opening logfile `cvlc.log'
@@ -17,16 +18,21 @@ core debug: adding item `http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/2
 core debug: meta ok for (null), need to fetch art
 core debug: looking for interface module matching "hotkeys,none": 19 candidates
 core debug: looking for meta fetcher module matching "any": 1 candidates
-core debug: using interface module "hotkeys"
-core debug: looking for interface module matching "globalhotkeys,none": 19 candidates
+lua debug: Trying Lua scripts in /home/dieter/.local/share/vlc/lua/meta/fetcher
 core debug: creating VLM
 lua debug: Loaded /usr/share/vlc/lua/http/custom.lua
 core debug: net: listening to * port 8080
+lua debug: Trying Lua scripts in /usr/lib/vlc/lua/meta/fetcher
+core debug: using interface module "hotkeys"
+lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/fetcher/tvrage.luac
+core debug: looking for interface module matching "globalhotkeys,none": 19 candidates
 core debug: using interface module "xcb_hotkeys"
 core debug: looking for interface module matching "dbus,none": 19 candidates
-lua debug: Trying Lua scripts in /home/dieter/.local/share/vlc/lua/meta/fetcher
-lua debug: Trying Lua scripts in /usr/lib/vlc/lua/meta/fetcher
-lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/fetcher/tvrage.luac
+lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/fetcher/tvrage.luac
+lua debug: Trying Lua scripts in /usr/share/vlc/lua/meta/fetcher
+core debug: no meta fetcher modules matched
+core debug: searching art for http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3
+core debug: looking for art finder module matching "any": 2 candidates
 dbus debug: listening on dbus as: org.mpris.MediaPlayer2.vlc
 core debug: using interface module "dbus"
 core debug: looking for interface module matching "dummy": 19 candidates
@@ -40,67 +46,65 @@ core debug: resyncing on http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/2
 core debug: http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3 is at 0
 core debug: creating new input thread
 core debug: Creating an input for 'http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3'
+lua debug: Trying Lua scripts in /home/dieter/.local/share/vlc/lua/meta/art
+lua debug: Trying Lua scripts in /usr/lib/vlc/lua/meta/art
+lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/art/00_musicbrainz.luac
 core debug: requesting art for http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3
-core debug: using sout chain=`std{access=file,mux=raw,dst=wdr3-2017-10-23_19-44-(Jaco Pastorius - Jazz im WDR2).mp3'
+core debug: using sout chain=`std{access=file,mux=raw,dst=wdr3-2017-10-26_18-16-(Jaco Pastorius - Jazz im WDR2).mp3'
 core debug: stream=`std'
 core debug: looking for sout stream module matching "std": 22 candidates
-core debug: looking for meta fetcher module matching "any": 1 candidates
 core debug: set config option: sout-standard-access to file
 core debug: set config option: sout-standard-mux to raw
-core debug: set config option: sout-standard-dst to wdr3-2017-10-23_19-44-(Jaco Pastorius - Jazz im WDR2).mp3
+core debug: set config option: sout-standard-dst to wdr3-2017-10-26_18-16-(Jaco Pastorius - Jazz im WDR2).mp3
 core debug: looking for sout access module matching "file": 8 candidates
-access_output_file debug: file access output opened (wdr3-2017-10-23_19-44-(Jaco Pastorius - Jazz im WDR2).mp3)
+dbus debug: Getting All properties
+access_output_file debug: file access output opened (wdr3-2017-10-26_18-16-(Jaco Pastorius - Jazz im WDR2).mp3)
 core debug: using sout access module "access_output_file"
 core debug: looking for sout mux module matching "raw": 10 candidates
-dbus debug: Getting All properties
-lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/fetcher/tvrage.luac
+core debug: looking for meta fetcher module matching "any": 1 candidates
+lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/art/00_musicbrainz.luac
+lua debug: Trying Lua scripts in /home/dieter/.local/share/vlc/lua/meta/fetcher
+lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/art/01_googleimage.luac
 mux_dummy debug: Dummy/Raw muxer opened
 mux_dummy: Open
 core debug: using sout mux module "mux_dummy"
 core debug: muxer support adding stream at any time
 core debug: muxer prefers to wait for all ES before starting to mux
-lua debug: Trying Lua scripts in /usr/share/vlc/lua/meta/fetcher
-stream_out_standard debug: using `file/raw://wdr3-2017-10-23_19-44-(Jaco Pastorius - Jazz im WDR2).mp3'
-core debug: no meta fetcher modules matched
+stream_out_standard debug: using `file/raw://wdr3-2017-10-26_18-16-(Jaco Pastorius - Jazz im WDR2).mp3'
 core debug: using sout stream module "stream_out_standard"
-core debug: searching art for http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3
 core debug: using timeshift granularity of 50 MiB, in path '/tmp'
 core debug: `http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3' gives access `http' demux `' path `wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3'
-core debug: looking for art finder module matching "any": 2 candidates
 core debug: specified demux `any'
 core debug: creating demux: access='http' demux='any' location='wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3' file='(null)'
 core debug: looking for access_demux module matching "http": 20 candidates
 core debug: no access_demux modules matched
 core debug: creating access 'http' location='wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3', path='(null)'
 core debug: looking for access module matching "http": 25 candidates
-lua debug: Trying Lua scripts in /home/dieter/.local/share/vlc/lua/meta/fetcher
 lua debug: Trying Lua scripts in /usr/lib/vlc/lua/meta/fetcher
 lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/fetcher/tvrage.luac
-lua debug: Trying Lua scripts in /home/dieter/.local/share/vlc/lua/meta/art
-lua debug: Trying Lua scripts in /usr/lib/vlc/lua/meta/art
-lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/art/00_musicbrainz.luac
+http debug: querying proxy for http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3
+lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/art/01_googleimage.luac
+lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/art/02_frenchtv.luac
 lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/fetcher/tvrage.luac
 lua debug: Trying Lua scripts in /usr/share/vlc/lua/meta/fetcher
 core debug: no meta fetcher modules matched
 core debug: searching art for http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3
 core debug: looking for art finder module matching "any": 2 candidates
-lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/art/00_musicbrainz.luac
-lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/art/01_googleimage.luac
+lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/art/02_frenchtv.luac
+lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/art/03_lastfm.luac
 lua debug: Trying Lua scripts in /home/dieter/.local/share/vlc/lua/meta/art
 lua debug: Trying Lua scripts in /usr/lib/vlc/lua/meta/art
 lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/art/00_musicbrainz.luac
-lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/art/01_googleimage.luac
-lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/art/02_frenchtv.luac
+lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/art/03_lastfm.luac
+lua debug: Trying Lua scripts in /usr/share/vlc/lua/meta/art
+core debug: no art finder modules matched
+core debug: art not found for http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3
 lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/art/00_musicbrainz.luac
 lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/art/01_googleimage.luac
-http debug: querying proxy for http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3
-lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/art/02_frenchtv.luac
-lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/art/03_lastfm.luac
-lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/art/03_lastfm.luac
-lua debug: Trying Lua scripts in /usr/share/vlc/lua/meta/art
-core debug: no art finder modules matched
-core debug: art not found for http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3
+http debug: no proxy
+http debug: http: server='wdr-wdr3-live.icecast.wdr.de' port=80 file='/wdr/wdr3/live/mp3/256/stream.mp3'
 lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/art/01_googleimage.luac
+core debug: net: connecting to wdr-wdr3-live.icecast.wdr.de port 80
 lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/art/02_frenchtv.luac
 lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/art/02_frenchtv.luac
 lua debug: Trying Lua playlist script /usr/lib/vlc/lua/meta/art/03_lastfm.luac
@@ -108,19 +112,16 @@ lua debug: skipping script (unmatched scope) /usr/lib/vlc/lua/meta/art/03_lastfm
 lua debug: Trying Lua scripts in /usr/share/vlc/lua/meta/art
 core debug: no art finder modules matched
 core debug: art not found for http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3
-http debug: no proxy
-http debug: http: server='wdr-wdr3-live.icecast.wdr.de' port=80 file='/wdr/wdr3/live/mp3/256/stream.mp3'
-core debug: net: connecting to wdr-wdr3-live.icecast.wdr.de port 80
 dbus debug: Getting All properties
-core debug: connection succeeded (socket = 19)
+core debug: connection succeeded (socket = 20)
 http debug: protocol 'HTTP' answer code 200
 http debug: Content-Type: audio/mpeg
 http debug: Meta-Info: icy-description: Westdeutscher Rundfunk Koeln
-http debug: Icy-Genre: WDR
+http debug: Icy-Genre: wdr
 http debug: Icy-Name: WDR 3, Westdeutscher Rundfunk Koeln
 http debug: Meta-Info: icy-pub: 1
 http debug: Meta-Info: icy-url: http://www.wdr3.de
-http debug: Server: dg-wdr-http_fra-dtag_edge_b99721def28d814323a259594cc85ca5
+http debug: Server: dg-wdr-http_fra-dtag_edge_138494186e6aa0155628db0702fb834f
 http debug: Connection: Close
 http debug: Icy-MetaInt: 16000
 http warning: ICY metaint=16000
@@ -130,7 +131,7 @@ core debug: using access module "http"
 core debug: Using stream method for AStream*
 core debug: starting pre-buffering
 core debug: received first data after 0 ms
-core debug: pre-buffering done 1024 bytes in 0s - 52631 KiB/s
+core debug: pre-buffering done 1024 bytes in 0s - 50000 KiB/s
 core debug: looking for stream_filter module matching "any": 9 candidates
 core debug: no stream_filter modules matched
 core debug: looking for stream_filter module matching "record": 9 candidates
@@ -156,24 +157,24 @@ core debug: `http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp
 core debug: Buffering 0%
 core debug: switching to async mode
 core debug: Buffering 2%
+mpeg_audio debug: MPGA channels:2 samplerate:48000 bitrate:320
 core debug: Buffering 4%
+core debug: adding a new sout input (sout_input:0x7ff4b8000d40)
 core debug: Buffering 7%
+core debug: adding a new input
 core debug: Buffering 9%
+mux_dummy debug: adding input
 core debug: Buffering 12%
 core debug: Buffering 14%
 core debug: Buffering 16%
 core debug: Buffering 19%
-mpeg_audio debug: MPGA channels:2 samplerate:48000 bitrate:320
-core debug: adding a new sout input (sout_input:0x7f70a4000d40)
-core debug: adding a new input
-mux_dummy debug: adding input
 core debug: Buffering 21%
 core debug: Buffering 24%
 core debug: Buffering 26%
 core debug: Buffering 28%
 core debug: Buffering 31%
 core debug: Buffering 33%
-http debug: New Icy-Title=WDR 3 im Internet: www.wdr3.de
+http debug: New Icy-Title=WDR 3 zum Aufnehmen: Der RadioRecorder - Infos unter www.wdr3.de
 
 core debug: Buffering 36%
 core debug: Buffering 38%
@@ -202,13 +203,11 @@ core debug: Buffering 91%
 core debug: Buffering 93%
 core debug: Buffering 96%
 core debug: Buffering 98%
-core debug: Stream buffering done (1008 ms in 68 ms)
+core debug: Stream buffering done (1008 ms in 44 ms)
 core debug: Decoder wait done in 0 ms
+http debug: New Icy-Title=WDR 3 im Internet: www.wdr3.de
+
+http debug: New Icy-Title=Moderation: Sabine Weber
+
 http debug: New Icy-Title=WDR 3 als Podcast oder Download - Infos unter www.wdr3.de
-
-http debug: New Icy-Title=WDR 3 Konzert
-
-http debug: New Icy-Title=WDR 3 zum Aufnehmen: Der RadioRecorder - Infos unter www.wdr3.de
-
-http debug: New Icy-Title=Moderation: Ulrike Froleyks
 

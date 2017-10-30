@@ -5,7 +5,7 @@ RadioStreamRecorder
 ## Synopsis
 
 RadioStreamRecorder.py **records a stream** from a given internet radio url. You
-can stop recordng after a given time an you can tag some ID3 tags at the
+can stop recordng after a given time and you can tag some important ID3 tags at the
 recorded mp3 file.
 Recording ist done with "a little help" from cvlc.
 You can start recording with the Unix at-command (see man at)
@@ -28,6 +28,9 @@ Install vlc
 ```
 Give examples
 ```
+## Configuration
+
+See settings.ini
 
 ## API Reference
 
@@ -40,6 +43,9 @@ Describe and show how to run the tests with code examples.
 ```
 Give examples
 
+./RadioStreamRecorder.py record wdr3 1 --verbose --album "Jazz im WDR3"
+--artist "Jaco Pastorius"
+
 ## Contributors
 
 Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.
@@ -47,3 +53,7 @@ Let people know how they can dive into the project, include important links to t
 ## License
 
 A short snippet describing the license (MIT, Apache, etc.)
+
+## ToDo
+1. Configure directory to save recorded mp3 file
+2. Read arguments from file with argument --file <filename>

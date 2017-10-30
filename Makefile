@@ -18,9 +18,11 @@ check:
 	pylint3 --reports=n $(Source)
 
 test:
-	rm wdr3*.log wdr3*.mp3
-	./RadioStreamRecorder.py record wdr3 1 --verbose --album "Jazz im WDR2" --artist "Jaco Pastorius"
-	eyeD3 *.mp3
+	find . -name '*.log' -exec rm --force {} +
+	find . -name '*.mp3' -exec rm --force {} +
+	./RadioStreamRecorder.py record wdr3 1 --verbose --album "Jazz im WDR3" --artist "Jaco Pastorius"
+	@echo "Show MP3 tags"
+	## eyeD3 ~/Musik/Recording/*.mp3
 
 help:
 	@echo "    clean-pyc"

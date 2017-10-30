@@ -26,10 +26,9 @@
 
 import argparse
 import configparser
+## from configparser import SafeConfigParser
 import sys
 import os
-## from subprocess import call
-## from subprocess import run
 import subprocess
 from time import gmtime, strftime
 import eyed3
@@ -54,6 +53,7 @@ def read_settings():
     """
         read settings from configuration file
     """
+
     settings_base_dir = ''
     if sys.platform.startswith('linux'):
         settings_base_dir = os.getenv('HOME') + os.sep + '.config' \
@@ -63,6 +63,10 @@ def read_settings():
             'RadioStreamRecorder'
     settings_base_dir += os.sep
     config = configparser.ConfigParser()
+
+    ## parser = SafeConfigParser(os.environ)
+    ## parser.read('config.ini')
+
     try:
         config.read_file(open(settings_base_dir + 'settings.ini'))
     except FileNotFoundError as err:
@@ -71,10 +75,12 @@ def read_settings():
         sys.exit()
     return dict(config.items())
 
+
 def radio_stream_recording(args):
     """
         run recording of stream with a little help from cvlc
     """
+
     streamurl = ''
     cvlclog = 'cvlc.log'
 
@@ -99,22 +105,32 @@ def radio_stream_recording(args):
 
     # get target_dir for recorded file
     try:
-        recording_directory = settings['GLOBAL']['target_dir']
+        ## recording_directory = settings['GLOBAL']['target_dir']
+        recording_directory = os.path.expandvars(
+            settings['GLOBAL']['target_dir'])
         if args.verbose:
             print(recording_directory)
     except KeyError:
         print('Unkown Recording directoy: ')
         sys.exit()
 
+    # create recording directory if it doesn't exist
+    if not os.path.isdir(recording_directory):
+        print('No dir')
+        try:
+            os.makedirs(recording_directory)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                print(e.errno)
+                raise
+        exit(1)
+
     recording_date = strftime("%Y-%m-%d_%H-%M", gmtime())
-    ## file = '%s-%s-(%s - %s)' % (args.station, \
-    ##                            strftime("%Y-%m-%d_%H-%M", gmtime()),
-    ##                            args.artist, args.album)
     file = '%s-%s-(%s - %s)' % (args.station, \
                                 recording_date,
                                 args.artist, args.album)
-    mp3_file = file + '.mp3'
-    log_file = file + '.log'
+    mp3_file = recording_directory + '/' + file + '.mp3'
+    log_file = recording_directory + '/' + file + '.log'
     if args.verbose:
         print(mp3_file)
         print(log_file)
@@ -129,13 +145,15 @@ def radio_stream_recording(args):
     cmd += ['--logfile=%s' % (cvlclog)]
     cmd += [streamurl]
     cmd += ['--sout=#std{access=file,mux=raw,dst=%s' % (mp3_file)]
+    ## cmd += ['--sout=#std{access=file,mux=raw,dst=%s/%s' %
+    ##        (recording_directory, mp3_file)]
     print(cmd)
 
     # Uebergabe des Kommandos und der Parameter muss als Liste erfolgen
     try:
-        t = subprocess.check_output(cmd, shell=False,
-                                    stderr=subprocess.STDOUT,
-                                    timeout=(args.duration * 60))
+        subprocess.check_output(cmd, shell=False,
+                                stderr=subprocess.STDOUT,
+                                timeout=(args.duration * 60))
     except subprocess.TimeoutExpired as e:
         print('recording is finished')
         print(e)
@@ -145,6 +163,7 @@ def radio_stream_recording(args):
 
     set_mp3_tags(mp3_file, args.artist, args.album, recording_date, streamurl)
 
+    show_mp3_tags(mp3_file)
 
 def set_mp3_tags(mp3_file, artist, album, recording_date, url):
     """
@@ -177,11 +196,18 @@ def set_mp3_tags(mp3_file, artist, album, recording_date, url):
     ## print(audiofile.version)
     ## print(audiofile.tag)
 
-    print(dir(audiofile.tag))
-    for p in sys.path:
-        print(p)
+    ## print(dir(audiofile.tag))
     audiofile.tag.save()
     print(audiofile.tag.version)
+
+def show_mp3_tags(mp3_file):
+    """
+
+    """
+    cmd = 'eyeD3' + ' ' + '\"' + mp3_file + '\"'
+    print(cmd)
+    os.system(cmd)
+
 
 def remove_log(log):
     """ remove logfile because cvlc appends log.

@@ -33,6 +33,7 @@ Give examples
 See settings.ini
 
 Example of settings.ini (~/.config/RadioStreamRecorder/settings.ini)
+
 '''
 [GLOBAL]
 target_dir = ${HOME}/Musik/Recording
@@ -59,6 +60,7 @@ Give examples
 
 ./RadioStreamRecorder.py record wdr3 1 --verbose --album "Jazz im WDR3"
 --artist "Jaco Pastorius"
+```
 
 ## Contributors
 

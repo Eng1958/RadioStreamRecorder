@@ -5,7 +5,7 @@
 HOST=127.0.0.1
 TEST_PATH=./
 PYTHON=python3
-Source=RadioStreamRecorder.py
+Source=RadioStreamRecorder.py rsrhelper.py
 
 
 clean-pyc:
@@ -21,8 +21,6 @@ test:
 	find . -name '*.log' -exec rm --force {} +
 	find . -name '*.mp3' -exec rm --force {} +
 	./RadioStreamRecorder.py record wdr3 1 --verbose --album "Jazz im WDR3" --artist "Jaco Pastorius"
-	@echo "Show MP3 tags"
-	## eyeD3 ~/Musik/Recording/*.mp3
 
 help:
 	@echo "    clean-pyc"

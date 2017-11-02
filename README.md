@@ -22,8 +22,8 @@ I haven't found a stream recorder under Linux (Ubuntu)
 
 ## Installation
 
-Install eyeD3
-Install vlc
+Install eyeD3 (See: [link to eyeD3!](http://https://eyed3.readthedocs.io/)
+Install vlc  (See: [link to vlc!](http://vlc.com)
 
 ```
 Give examples
@@ -32,9 +32,23 @@ Give examples
 
 See settings.ini
 
+Example of settings.ini (~/.config/RadioStreamRecorder/settings.ini)
+'''
+[GLOBAL]
+target_dir = ${HOME}/Musik/Recording
+
+[STATIONS]
+WDR3 = http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3
+DLF = http://www.deutschlandradio.de/streaming/dlf.m3u
+DKULTUR = http://www.deutschlandradio.de/streaming/dkultur.m3u
+'''
+
 ## API Reference
 
-Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.
+Depending on the size of the project, if it is small and simple enough 
+the reference docs can be added to the README. For medium size to 
+larger projects it is important to at least provide a link to where 
+the API reference docs live.
 
 ## Tests
 
@@ -55,5 +69,7 @@ Let people know how they can dive into the project, include important links to t
 A short snippet describing the license (MIT, Apache, etc.)
 
 ## ToDo
-1. Configure directory to save recorded mp3 file
-2. Read arguments from file with argument --file <filename>
+- [x] Configure directory to save recorded mp3 file (Done)
+- [ ] Read arguments from file with argument --file <filename>
+
+

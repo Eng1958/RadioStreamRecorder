@@ -73,5 +73,8 @@ A short snippet describing the license (MIT, Apache, etc.)
 ## ToDo
 - [x] Configure directory to save recorded mp3 file (Done)
 - [ ] Read arguments from file with argument --file <filename>
+- [ ] Create file with RadioStreamRecorder.py to run with at command (at -f
+  file)
+- [ ] Recording time as an argument (running at command)
 
 

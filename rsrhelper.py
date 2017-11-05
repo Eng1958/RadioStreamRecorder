@@ -107,10 +107,9 @@ def set_mp3_tags(mp3_file, artist, album, recording_date, url, icy_tags):
     audiofile.tag.tagging_date = recording_date[:10]
     audiofile.tag.comments.set(os.getenv('USER', '????'), u'User')
     audiofile.tag.comments.set(recording_date, u'Recording Time')
-    c = '\n'.join(icy_tags)
+    comment = '\n'.join(icy_tags)
 
-    ## audiofile.tag.comments.set(str(icy_tags), u'ICY-Tags')
-    audiofile.tag.comments.set(c, u'ICY-Tags')
+    audiofile.tag.comments.set(comment, u'ICY-Tags')
     audiofile.tag.user_text_frames.set(u"****", u"Rating")
     audiofile.tag.internet_radio_url = bytes(url, 'utf-8')
 
@@ -137,9 +136,9 @@ def remove_log(log):
     if os.path.exists(log):
         try:
             os.remove(log)
-        except OSError as e:
+        except OSError as error:
             ## print ("Error: %s - %s." % (e.log,e.strerror))
-            if e.errno != errno.ENOENT: # errno.ENOENT = no such file or directory
+            if error.errno != errno.ENOENT: # errno.ENOENT = no such file or directory
                 raise # re-raise exception if a different error occurred
     else:
         print("Sorry, I can not find %s file." % log)
@@ -177,9 +176,8 @@ def icy_tag(log):
     """
     icy_list = []
 
-    ## print(log)
-    with open(log) as f:
-        content = f.readlines()
+    with open(log) as fds:
+        content = fds.readlines()
         for line in content:
             line = re.sub('http debug: ', '', line)
             if 'Icy' in line:
@@ -188,6 +186,6 @@ def icy_tag(log):
             if 'icy' in line:
                 icy_list.append(line.rstrip('\n'))
                 print(line, end='')
-        f.close()
+        fds.close()
         return icy_list
 

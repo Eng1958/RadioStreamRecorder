@@ -28,7 +28,7 @@ import argparse
 import sys
 import os
 import subprocess
-from time import gmtime, strftime
+from time import strftime, localtime
 
 import rsrhelper
 
@@ -76,7 +76,7 @@ def radio_stream_recording(args):
                 raise
         exit(1)
 
-    recording_date = strftime("%Y-%m-%d_%H-%M", gmtime())
+    recording_date = strftime("%Y-%m-%d_%H-%M", localtime())
     file = '%s-%s-(%s - %s)' % (args.station, \
                                 recording_date,
                                 args.artist, args.album)
@@ -138,6 +138,7 @@ def main():
 
     subparsers = parser.add_subparsers(help='sub-command help')
 
+    # Parser for record argument and optional arguments
     parser_record = subparsers.add_parser('record', help='Record a station')
     parser_record.add_argument('station',
                                type=str, help='Name of the radio station '
@@ -160,10 +161,15 @@ def main():
     parser_record.add_argument('-t', '--artist',
                                type=str,
                                help="artist name")
+    parser_record.add_argument('-r', '--recordingtime',
+                               type=str,
+                               help="Recording time")
     parser_record.set_defaults(func=radio_stream_recording)
 
+    # Parser for list argument (no optional arguments)
     parser_list = subparsers.add_parser('list', help='List all known stations')
     parser_list.set_defaults(func=rsrhelper.list_stations)
+
 
     args = parser.parse_args()
     args.func(args)

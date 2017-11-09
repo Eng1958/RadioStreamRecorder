@@ -28,6 +28,7 @@ import configparser
 import sys
 import os
 import re
+import subprocess
 import eyed3
 
 def print_args(args):
@@ -189,3 +190,41 @@ def icy_tag(log):
         fds.close()
         return icy_list
 
+def start_recording(args, mp3_file, streamurl):
+    """
+        start recording directly or at a later time with a little help
+        from the at-command
+    """
+
+    cvlclog = 'cvlc.log'
+
+    remove_log(cvlclog)
+
+    # build command to record a stream with cvlc. Some informatione
+    # during recording will be logged in cvlc.log
+    cmd = ['/usr/bin/cvlc']
+    cmd += ['--verbose=2']
+    cmd += ['--extraintf=http:logger']
+    cmd += ['--file-logging']
+    cmd += ['--logfile=%s' % (cvlclog)]
+    cmd += [streamurl]
+    cmd += ['--sout=#std{access=file,mux=raw,dst=%s' % (mp3_file)]
+    if args.verbose:
+        print(cmd)
+
+    if args.recordingtime is None:
+        # Uebergabe des Kommandos und der Parameter muss als Liste erfolgen
+        try:
+            subprocess.check_output(cmd, shell=False,
+                                    stderr=subprocess.STDOUT,
+                                    timeout=(args.duration * 60))
+        except subprocess.TimeoutExpired as e:
+            print('recording is finished')
+            print(e)
+    else:
+        # write cmd to file
+        # run at cmd
+        print("run at command")
+        file = open("tmp-script.sh", 'w')
+        file.write(" ".join(str(x) for x in cmd) + '\n')
+        file.close()

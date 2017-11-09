@@ -86,37 +86,18 @@ def radio_stream_recording(args):
         print(mp3_file)
         print(log_file)
 
-    rsrhelper.remove_log(cvlclog)
+    rsrhelper.start_recording(args, mp3_file, streamurl)
+    if args.recordingtime is None:
+        icy_tags = rsrhelper.icy_tag(cvlclog)
+        rsrhelper.recording_log(log_file, args.station, args.album, args.artist,
+                                icy_tags)
 
-    # build command to record a stream with cvlc. Some informatione
-    # during recording will be logged in cvlc.log
-    cmd = ['/usr/bin/cvlc']
-    cmd += ['--verbose=2']
-    cmd += ['--extraintf=http:logger']
-    cmd += ['--file-logging']
-    cmd += ['--logfile=%s' % (cvlclog)]
-    cmd += [streamurl]
-    cmd += ['--sout=#std{access=file,mux=raw,dst=%s' % (mp3_file)]
-    if args.verbose:
-        print(cmd)
+        rsrhelper.set_mp3_tags(mp3_file, args.artist, args.album, recording_date,
+                            streamurl, icy_tags)
 
-    # Uebergabe des Kommandos und der Parameter muss als Liste erfolgen
-    try:
-        subprocess.check_output(cmd, shell=False,
-                                stderr=subprocess.STDOUT,
-                                timeout=(args.duration * 60))
-    except subprocess.TimeoutExpired as e:
-        print('recording is finished')
-        print(e)
-
-    icy_tags = rsrhelper.icy_tag(cvlclog)
-    rsrhelper.recording_log(log_file, args.station, args.album, args.artist,
-                            icy_tags)
-
-    rsrhelper.set_mp3_tags(mp3_file, args.artist, args.album, recording_date,
-                           streamurl, icy_tags)
-
-    rsrhelper.show_mp3_tags(mp3_file)
+        rsrhelper.show_mp3_tags(mp3_file)
+    else:
+        print("Start REcording at %s" % (args.recordingtime))
 
 
 def main():
@@ -126,10 +107,6 @@ def main():
 
     # -----------------------------------------------------------------
     # get options
-    #   -r --radiostation       Shortcut of radio station
-    #   -l --recordinglength    Lenght of recording (in minutes)
-    #   --album                  set ID-Tag album
-    #   --artist                 set ID-Tag artist
     # -----------------------------------------------------------------
 
     parser = argparse.ArgumentParser(
@@ -163,7 +140,7 @@ def main():
                                help="artist name")
     parser_record.add_argument('-r', '--recordingtime',
                                type=str,
-                               help="Recording time")
+                               help="Recording time (at command)")
     parser_record.set_defaults(func=radio_stream_recording)
 
     # Parser for list argument (no optional arguments)

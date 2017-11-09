@@ -22,6 +22,9 @@ test:
 	find . -name '*.mp3' -exec rm --force {} +
 	./RadioStreamRecorder.py record wdr3 1 --verbose --album "Jazz im WDR3" --artist "Jaco Pastorius"
 
+at:
+	./RadioStreamRecorder.py record wdr3 1 --recordingtime "now + 1" --verbose --album "Jazz im WDR3" --artist "Jaco Pastorius"
+
 help:
 	@echo "    clean-pyc"
 	@echo "        Remove python artifacts."

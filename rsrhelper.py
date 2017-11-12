@@ -119,15 +119,18 @@ def set_mp3_tags(mp3_file, artist, album, recording_date, url, icy_tags):
     print(audiofile.tag.version)
 
 
-def show_mp3_tags(mp3_file):
+def get_mp3_tags(mp3_file):
     """
        show mp3 tags with a little help from eyeD3
     """
 
     ## cmd = 'eyeD3' + ' ' + '\"' + mp3_file + '\"'
     ## print(cmd)
-    os.system('eyeD3' + ' ' + '\"' + mp3_file + '\"')
-
+    ## os.system('eyeD3' + ' ' + '\"' + mp3_file + '\"')
+    ## os.system('eyeD3 \"%s\"' % (mp3_file))
+    output = subprocess.check_output('eyeD3 --no-color \"%s\"' % (mp3_file),
+                                     shell=True, universal_newlines=True)
+    return output
 
 def remove_log(log):
     """ remove logfile because cvlc appends log.
@@ -161,7 +164,7 @@ def recording_log(log, station, album, artist, tags):
 
     file.close()
 
-def list_stations(args):
+def list_stations():
     """
         list all radio stations in settings.ini
     """
@@ -190,14 +193,27 @@ def icy_tag(log):
         fds.close()
         return icy_list
 
-def start_recording(args, mp3_file, streamurl):
+def start_recording(args, mp3_file, log_file, recording_date, streamurl):
     """
         start recording directly or at a later time with a little help
         from the at-command
     """
 
+
+    if args.recordingtime is None:
+        start_recording_direct(args, mp3_file, log_file, recording_date, streamurl)
+
+    else:
+        start_recording_by_time(args)
+
+
+def start_recording_direct(args, mp3_file, log_file, recording_date, streamurl):
+    """
+        start recording directly
+    """
     cvlclog = 'cvlc.log'
 
+    # record the stream now
     remove_log(cvlclog)
 
     # build command to record a stream with cvlc. Some informatione
@@ -209,22 +225,64 @@ def start_recording(args, mp3_file, streamurl):
     cmd += ['--logfile=%s' % (cvlclog)]
     cmd += [streamurl]
     cmd += ['--sout=#std{access=file,mux=raw,dst=%s' % (mp3_file)]
+
     if args.verbose:
         print(cmd)
+    # Uebergabe des Kommandos und der Parameter muss als Liste erfolgen
+    try:
+        subprocess.check_output(cmd, shell=False,
+                                stderr=subprocess.STDOUT,
+                                timeout=(args.duration * 60))
+    except subprocess.TimeoutExpired as error:
+        print('recording is finished')
+        print(error)
 
-    if args.recordingtime is None:
-        # Uebergabe des Kommandos und der Parameter muss als Liste erfolgen
-        try:
-            subprocess.check_output(cmd, shell=False,
-                                    stderr=subprocess.STDOUT,
-                                    timeout=(args.duration * 60))
-        except subprocess.TimeoutExpired as e:
-            print('recording is finished')
-            print(e)
-    else:
+
+        icy_tags = icy_tag(cvlclog)
+        recording_log(log_file, args.station, args.album, args.artist,
+                      icy_tags)
+
+        set_mp3_tags(mp3_file, args.artist, args.album, recording_date,
+                     streamurl, icy_tags)
+
+        out = get_mp3_tags(mp3_file)
+        print(out)
+        add_to_log(out, log_file)
+
+def start_recording_by_time(args):
+    """
+        start recording with at command
+    """
+
+    # remove argument --recordingtime to run this script
+    print("run at command")
+    file = open("/tmp/at-script.sh", 'w')
+    cmd = ''
+    count = 0
+    while count < len(sys.argv):
+        print(count, sys.argv[count])
+        if sys.argv[count] == '--recordingtime':
+            count = count + 2
         # write cmd to file
         # run at cmd
-        print("run at command")
-        file = open("tmp-script.sh", 'w')
-        file.write(" ".join(str(x) for x in cmd) + '\n')
-        file.close()
+        part = sys.argv[count]
+        if ' ' in part:
+            part = '\"' + part + '\"'
+        cmd = cmd + str(part) + ' '
+        file.write(part + ' ')
+
+        count = count + 1
+
+    file.write('\n')
+    file.close()
+    print(cmd)
+
+    print("Start Recording at %s" % (args.recordingtime))
+    os.system('at -f %s %s' % ('/tmp/at-script.sh', args.recordingtime))
+    return
+
+def add_to_log(eyeD3_output, log_file):
+    """
+        add eyeD3 output to logfile
+    """
+

@@ -23,7 +23,7 @@ test:
 	./RadioStreamRecorder.py record wdr3 1 --verbose --album "Jazz im WDR3" --artist "Jaco Pastorius"
 
 at:
-	./RadioStreamRecorder.py record wdr3 1 --recordingtime "now + 1" --verbose --album "Jazz im WDR3" --artist "Jaco Pastorius"
+	./RadioStreamRecorder.py record wdr3 3 --recordingtime "now + 2min" --verbose --album "Jazz im WDR3" --artist "Jaco Pastorius"
 
 help:
 	@echo "    clean-pyc"

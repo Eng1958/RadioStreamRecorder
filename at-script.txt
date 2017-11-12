@@ -1,4 +1,0 @@
-
-## ./RadioStreamRecorder.py record wdr3 1 --verbose --album "Jazz im WDR3" --artist "Jaco Pastorius"
-./RadioStreamRecorder.py record wdr3 117 --verbose --album "Jazz und World3" --artist "John Aebercrombie"
-

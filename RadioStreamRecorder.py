@@ -27,8 +27,8 @@
 import argparse
 import sys
 import os
-## import subprocess
-from time import strftime, localtime
+import errno
+## from time import strftime, localtime
 
 import rsrhelper
 
@@ -66,7 +66,6 @@ def radio_stream_recording(args):
 
     # create recording directory if it doesn't exist
     if not os.path.isdir(recording_directory):
-        print('No dir')
         try:
             os.makedirs(recording_directory)
         except OSError as err:
@@ -75,28 +74,7 @@ def radio_stream_recording(args):
                 raise
         exit(1)
 
-    recording_date = strftime("%Y-%m-%d_%H-%M", localtime())
-    file = '%s-%s-(%s - %s)' % (args.station, \
-                                recording_date,
-                                args.artist, args.album)
-    mp3_file = recording_directory + '/' + file + '.mp3'
-    log_file = recording_directory + '/' + file + '.log'
-    if args.verbose:
-        print(mp3_file)
-        print(log_file)
-
-    rsrhelper.start_recording(args, mp3_file, log_file, recording_date, streamurl)
-##    if args.recordingtime is None:
-##        icy_tags = rsrhelper.icy_tag(cvlclog)
-##        rsrhelper.recording_log(log_file, args.station, args.album, args.artist,
-##                                icy_tags)
-##
-##        rsrhelper.set_mp3_tags(mp3_file, args.artist, args.album, recording_date,
-##                               streamurl, icy_tags)
-##
-##        rsrhelper.show_mp3_tags(mp3_file)
-##    else:
-##        print("Start Recording at %s" % (args.recordingtime))
+    rsrhelper.start_recording(args, recording_directory, streamurl)
 
 
 def main():

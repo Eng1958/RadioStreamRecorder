@@ -28,7 +28,9 @@ import configparser
 import sys
 import os
 import re
+import errno
 import subprocess
+from time import strftime, localtime
 import eyed3
 
 def print_args(args):
@@ -73,9 +75,6 @@ def read_settings():
     settings_base_dir += os.sep
     config = configparser.ConfigParser()
 
-    ## parser = SafeConfigParser(os.environ)
-    ## parser.read('config.ini')
-
     try:
         config.read_file(open(settings_base_dir + 'settings.ini'))
     except FileNotFoundError as err:
@@ -85,7 +84,8 @@ def read_settings():
     return dict(config.items())
 
 
-def set_mp3_tags(mp3_file, artist, album, recording_date, url, icy_tags):
+## def set_mp3_tags(mp3_file, artist, album, recording_date, url, icy_tags):
+def set_mp3_tags(mp3_file, args, recording_date, url, icy_tags):
     """
         Set some tags for recorded mp3 file
 
@@ -96,8 +96,18 @@ def set_mp3_tags(mp3_file, artist, album, recording_date, url, icy_tags):
     if audiofile.tag is None:
         audiofile.initTag()
 
-    audiofile.tag.artist = artist
+    if args.artist is None:
+        artist = 'Undefined'
+    else:
+        artist = args.album
+
+    if args.album is None:
+        album = 'Undefined'
+    else:
+        album = args.album
+
     audiofile.tag.album = album
+    audiofile.tag.artist = artist
     audiofile.tag.album_artist = artist
     audiofile.tag.title = album + ' - ' + artist
     audiofile.tag.track_num = (1, 1)
@@ -124,10 +134,6 @@ def get_mp3_tags(mp3_file):
        show mp3 tags with a little help from eyeD3
     """
 
-    ## cmd = 'eyeD3' + ' ' + '\"' + mp3_file + '\"'
-    ## print(cmd)
-    ## os.system('eyeD3' + ' ' + '\"' + mp3_file + '\"')
-    ## os.system('eyeD3 \"%s\"' % (mp3_file))
     output = subprocess.check_output('eyeD3 --no-color \"%s\"' % (mp3_file),
                                      shell=True, universal_newlines=True)
     return output
@@ -193,12 +199,21 @@ def icy_tag(log):
         fds.close()
         return icy_list
 
-def start_recording(args, mp3_file, log_file, recording_date, streamurl):
+def start_recording(args, recording_directory, streamurl):
     """
         start recording directly or at a later time with a little help
         from the at-command
     """
 
+    recording_date = strftime("%Y-%m-%d_%H-%M", localtime())
+    file = '%s-%s-(%s - %s)' % (args.station, \
+                                recording_date,
+                                args.artist, args.album)
+    mp3_file = recording_directory + '/' + file + '.mp3'
+    log_file = recording_directory + '/' + file + '.log'
+    if args.verbose:
+        print(mp3_file)
+        print(log_file)
 
     if args.recordingtime is None:
         start_recording_direct(args, mp3_file, log_file, recording_date, streamurl)
@@ -242,7 +257,7 @@ def start_recording_direct(args, mp3_file, log_file, recording_date, streamurl):
         recording_log(log_file, args.station, args.album, args.artist,
                       icy_tags)
 
-        set_mp3_tags(mp3_file, args.artist, args.album, recording_date,
+        set_mp3_tags(mp3_file, args, recording_date,
                      streamurl, icy_tags)
 
         out = get_mp3_tags(mp3_file)
@@ -251,11 +266,12 @@ def start_recording_direct(args, mp3_file, log_file, recording_date, streamurl):
 
 def start_recording_by_time(args):
     """
-        start recording with at command
+        Start recording with at command.  Build a script and run it with
+        at command.
+        at -f <script> time
     """
 
     # remove argument --recordingtime to run this script
-    print("run at command")
     file = open("/tmp/at-script.sh", 'w')
     cmd = ''
     count = 0
@@ -279,10 +295,13 @@ def start_recording_by_time(args):
 
     print("Start Recording at %s" % (args.recordingtime))
     os.system('at -f %s %s' % ('/tmp/at-script.sh', args.recordingtime))
-    return
 
-def add_to_log(eyeD3_output, log_file):
+def add_to_log(eyed3_output, log):
     """
         add eyeD3 output to logfile
     """
 
+    file = open(log, 'a')
+    file.write('\n')
+    file.write(eyed3_output)
+    file.close()

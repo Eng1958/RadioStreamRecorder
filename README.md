@@ -24,6 +24,7 @@ I haven't found a stream recorder under Linux (Ubuntu)
 
 Install eyeD3 (See: [link to eyeD3!](http://https://eyed3.readthedocs.io/)
 Install vlc  (See: [link to vlc!](http://vlc.com)
+Install mp3split (See: ????)
 
 ```
 Give examples
@@ -73,8 +74,9 @@ A short snippet describing the license (MIT, Apache, etc.)
 ## ToDo
 - [x] Configure directory to save recorded mp3 file (Done)
 - [ ] Read arguments from file with argument --file <filename>
-- [ ] Create file with RadioStreamRecorder.py to run with at command (at -f
+- [x] Create file with RadioStreamRecorder.py to run with at command (at -f
   file)
-- [ ] Recording time as an argument (running at command)
+- [x] Recording time as an argument (running at command)
+- [ ] Using of mp3split for longer mp3 files
 
 

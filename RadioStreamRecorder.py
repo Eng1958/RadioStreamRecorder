@@ -2,7 +2,7 @@
 # vim: number tabstop=4 expandtab shiftwidth=4 softtabstop=4 autoindent
 
 """
-    RadioStreamRecorder.py – Recording internet radio streams
+    RadioStreamRecorder.py - Recording internet radio streams
     with a liitle help from vlc/cvlc and some other useful tool
     Copyright (C) 2017  Dieter Engemann <dieter@engemann.me>
 
@@ -118,6 +118,9 @@ def main():
     parser_record.add_argument('-r', '--recordingtime',
                                type=str,
                                help="Recording time (at command)")
+    parser_record.add_argument('-s', '--splittime',
+                               type=str,
+                               help="Split time")
     parser_record.set_defaults(func=radio_stream_recording)
 
     # Parser for list argument (no optional arguments)

@@ -2,7 +2,7 @@
 # vim: number tabstop=4 expandtab shiftwidth=4 softtabstop=4 autoindent
 
 """
-    rsrhelper.py – Recording internet radio streams
+    rsrhelper.py - Recording internet radio streams
     Copyright (C) 2017  Dieter Engemann <dieter@engemann.me>
 
     This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ import os
 import re
 import errno
 import subprocess
-from time import strftime, localtime
+from time import strftime, localtime, sleep
 import eyed3
 
 def print_args(args):
@@ -84,7 +84,6 @@ def read_settings():
     return dict(config.items())
 
 
-## def set_mp3_tags(mp3_file, artist, album, recording_date, url, icy_tags):
 def set_mp3_tags(mp3_file, args, recording_date, url, icy_tags):
     """
         Set some tags for recorded mp3 file
@@ -120,7 +119,8 @@ def set_mp3_tags(mp3_file, args, recording_date, url, icy_tags):
     audiofile.tag.comments.set(recording_date, u'Recording Time')
     comment = '\n'.join(icy_tags)
 
-    audiofile.tag.comments.set(comment, u'ICY-Tags')
+    # audiofile.tag.comments.set(comment, u'ICY-Tags')
+    audiofile.tag.comments.set(icy_tags, u'ICY-Tags')
     audiofile.tag.user_text_frames.set(u"****", u"Rating")
     audiofile.tag.internet_radio_url = bytes(url, 'utf-8')
 
@@ -138,7 +138,7 @@ def get_mp3_tags(mp3_file):
                                      shell=True, universal_newlines=True)
     return output
 
-def remove_log(log):
+def remove_cvlc_log(log):
     """ remove logfile because cvlc appends log.
         check if a file exists on disk
         if exists, delete it else show message on screen
@@ -154,20 +154,20 @@ def remove_log(log):
         print("Sorry, I can not find %s file." % log)
 
 
-def recording_log(log, station, album, artist, tags):
+def create_log(log, args):
     """
-        Write some information and the ICY-Tags to a logfile.
+        Create a logfile and write some information to this logfile.
     """
 
     file = open(log, 'w')
 
-    file.write('Station: ' + station + '\n')
-    file.write('Album: ' + album + '\n')
-    file.write('Artist: ' + artist + '\n')
+    file.write('Station: ' + args.station + '\n')
+    file.write('Album: ' + args.album + '\n')
+    file.write('Artist: ' + args.artist + '\n')
     file.write('\n')
-    for i in tags:
-        file.write(str(i) + '\n')
-
+#    for i in tags:
+#        file.write(str(i) + '\n')
+#
     file.close()
 
 def list_stations():
@@ -182,7 +182,7 @@ def list_stations():
 
 def icy_tag(log):
     """ Search for Icy-Tags in Log-File
-        return list with Icy-Tags
+        return string with Icy-Tags
     """
     icy_list = []
 
@@ -197,7 +197,9 @@ def icy_tag(log):
                 icy_list.append(line.rstrip('\n'))
                 print(line, end='')
         fds.close()
-        return icy_list
+
+        return '\n'.join(icy_list)
+        ### return icy_list
 
 def start_recording(args, recording_directory, streamurl):
     """
@@ -229,7 +231,7 @@ def start_recording_direct(args, mp3_file, log_file, recording_date, streamurl):
     cvlclog = 'cvlc.log'
 
     # record the stream now
-    remove_log(cvlclog)
+    remove_cvlc_log(cvlclog)
 
     # build command to record a stream with cvlc. Some informatione
     # during recording will be logged in cvlc.log
@@ -254,8 +256,9 @@ def start_recording_direct(args, mp3_file, log_file, recording_date, streamurl):
 
 
         icy_tags = icy_tag(cvlclog)
-        recording_log(log_file, args.station, args.album, args.artist,
-                      icy_tags)
+        create_log(log_file, args)
+
+        ### add_to_log(icy_tags, log_file)
 
         set_mp3_tags(mp3_file, args, recording_date,
                      streamurl, icy_tags)
@@ -263,6 +266,11 @@ def start_recording_direct(args, mp3_file, log_file, recording_date, streamurl):
         out = get_mp3_tags(mp3_file)
         print(out)
         add_to_log(out, log_file)
+
+        out = split_mp3(args, mp3_file)
+        print(out)
+        add_to_log(out, log_file)
+
 
 def start_recording_by_time(args):
     """
@@ -305,3 +313,43 @@ def add_to_log(eyed3_output, log):
     file.write('\n')
     file.write(eyed3_output)
     file.close()
+
+def split_mp3(args, mp3_file):
+    """Splits the recorded mp3 file into smaller pieces. Using mp3splt
+
+        mp3splt -a -f -t 15.0 -o "@n-@f" -f blabla.mp3
+
+        -q quit mode
+        -a Die Option -a kann zusätzlich zum Anpassen der Splitpunkte genutzt
+            werden, um mit der automatischen Erkennung von stillen Passagen
+            die Präzision noch zu verbessern
+        -f Frame-Modus
+        -t Mit diesem Schalter erstellt mp3splt einfach eine endliche Zahl
+            an Einzelteilen, die alle die vorgegebene Dauer haben
+        -o Ausgabeformat
+    """
+    if args.splittime is None:
+        return ''
+
+    cmd = ['/usr/bin/mp3splt']
+    cmd += ['-q']
+    cmd += ['-a']
+    cmd += ['-f']
+    cmd += ['-t']
+    cmd += ['%s' % (args.splittime)]
+    cmd += ['-o']
+    cmd += ['@n-@f']
+    cmd += ['%s' % (mp3_file)]
+
+    if args.verbose:
+        print(cmd)
+
+    # Uebergabe des Kommandos und der Parameter muss als Liste erfolgen
+    try:
+        output = subprocess.check_output(cmd, shell=False,
+                                         stderr=subprocess.STDOUT,
+                                         universal_newlines=True)
+        return output
+    except subprocess.CalledProcessError as error:
+        print(error.output)
+        return

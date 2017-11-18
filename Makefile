@@ -18,12 +18,16 @@ check:
 	pylint3 --reports=n $(Source)
 
 test:
-	find . -name '*.log' -exec rm --force {} +
-	find . -name '*.mp3' -exec rm --force {} +
-	./RadioStreamRecorder.py record wdr3 1 --verbose --album "Jazz im WDR3" --artist "Jaco Pastorius"
+	find /home/dieter/Musik/Recording/ -name '*Test*' -exec rm --force {} +
+	./RadioStreamRecorder.py record wdr3 1 --verbose --album "Test-Album" --artist "Test-Artist"
 
 at:
-	./RadioStreamRecorder.py record wdr3 3 --recordingtime "now + 2min" --verbose --album "Jazz im WDR3" --artist "Jaco Pastorius"
+	find /home/dieter/Musik/Recording/ -name '*Test*' -exec rm --force {} +
+	./RadioStreamRecorder.py record wdr3 3 --recordingtime "now + 2min" --verbose --album "Test-Album" --artist "Test-Artist"
+
+split:
+	find /home/dieter/Musik/Recording/ -name '*Test*' -exec rm --force {} +
+	./RadioStreamRecorder.py record wdr3 3 --verbose --album "Test-Album" --artist "Test-Artist" --splittime 1.0
 
 help:
 	@echo "    clean-pyc"

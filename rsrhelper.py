@@ -170,7 +170,7 @@ def create_log(log, args):
 #
     file.close()
 
-def list_stations():
+def list_stations(args):
     """
         list all radio stations in settings.ini
     """

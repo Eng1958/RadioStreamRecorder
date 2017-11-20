@@ -13,7 +13,19 @@ You can start recording with the Unix at-command (see man at)
 
 ## Code Example
 
-usage: ./RadioStreamRecorder.py .... (TODO: describe arguments)
+usage: RadioStreamRecorder.py [-h] {record,list} ...
+
+This program records internet radio streams. It is free software and comes
+with ABSOLUTELY NO WARRANTY.
+
+positional arguments:
+  {record,list}  sub-command help
+    record       Record a station
+    list         List all known stations
+
+optional arguments:
+  -h, --help     show this help message and exit
+
 
 
 ## Motivation
@@ -77,6 +89,6 @@ A short snippet describing the license (MIT, Apache, etc.)
 - [x] Create file with RadioStreamRecorder.py to run with at command (at -f
   file)
 - [x] Recording time as an argument (running at command)
-- [ ] Using of mp3split for longer mp3 files
+- [x] Using of mp3split for longer mp3 files
 
 

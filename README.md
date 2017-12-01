@@ -33,10 +33,17 @@ optional arguments:
 I haven't found a stream recorder under Linux (Ubuntu) 
 
 ## Installation
-
-Install eyeD3 (See: [link to eyeD3!](http://https://eyed3.readthedocs.io/)
+Must have
 Install vlc  (See: [link to vlc!](http://vlc.com)
-Install mp3split (See: ????)
+
+If you want to tag the recorded mp3 file
+Install eyeD3 (See: [link to eyeD3!](http://https://eyed3.readthedocs.io/)
+
+If you want to split the recorded mp3 files
+Install mp3split (sudo apt-get mp3splt)
+
+If you want to receive a mail when recording is finished
+Install sendmail (sudo apt-get sendmail)
 
 ```
 Give examples
@@ -50,6 +57,7 @@ Example of settings.ini (~/.config/RadioStreamRecorder/settings.ini)
 '''
 [GLOBAL]
 target_dir = ${HOME}/Musik/Recording
+mail = foo@bar.com
 
 [STATIONS]
 WDR3 = http://wdr-wdr3-live.icecast.wdr.de/wdr/wdr3/live/mp3/256/stream.mp3
@@ -90,5 +98,6 @@ A short snippet describing the license (MIT, Apache, etc.)
   file)
 - [x] Recording time as an argument (running at command)
 - [x] Using of mp3split for longer mp3 files
+- [ ] Send mail if recording is finished
 
 

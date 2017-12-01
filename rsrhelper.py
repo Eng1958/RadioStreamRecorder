@@ -165,9 +165,7 @@ def create_log(log, args):
     file.write('Album: ' + args.album + '\n')
     file.write('Artist: ' + args.artist + '\n')
     file.write('\n')
-#    for i in tags:
-#        file.write(str(i) + '\n')
-#
+
     file.close()
 
 def list_stations(args):
@@ -208,9 +206,11 @@ def start_recording(args, recording_directory, streamurl):
     """
 
     recording_date = strftime("%Y-%m-%d_%H-%M", localtime())
-    file = '%s-%s-(%s - %s)' % (args.station, \
+    file = '%s-%s-%s-%s' % (args.station, \
                                 recording_date,
                                 args.artist, args.album)
+    file = file.replace(' ', '_')
+
     mp3_file = recording_directory + '/' + file + '.mp3'
     log_file = recording_directory + '/' + file + '.log'
     if args.verbose:

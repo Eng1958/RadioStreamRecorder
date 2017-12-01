@@ -49,7 +49,7 @@ def radio_stream_recording(args):
     try:
         streamurl = settings['STATIONS'][args.station]
         if args.verbose:
-            print(streamurl)
+            print('Streaming-URL: %s' % (streamurl))
     except KeyError:
         print('Unkown station name: ' + args.station)
         sys.exit()
@@ -59,7 +59,7 @@ def radio_stream_recording(args):
         recording_directory = os.path.expandvars(
             settings['GLOBAL']['target_dir'])
         if args.verbose:
-            print(recording_directory)
+            print('Recording directory: %s' % (recording_directory))
     except KeyError:
         print('Unkown Recording directoy: ')
         sys.exit()

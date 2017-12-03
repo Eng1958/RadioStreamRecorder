@@ -328,6 +328,11 @@ def split_mp3(args, mp3_file):
             an Einzelteilen, die alle die vorgegebene Dauer haben
         -o Ausgabeformat
     """
+    MP3SPLT = '/usr/bin/mp3splt'
+
+    if not os.path.exists(MP3SPLT):
+        return ''
+
     if args.splittime is None:
         return ''
 
@@ -338,7 +343,7 @@ def split_mp3(args, mp3_file):
     cmd += ['-t']
     cmd += ['%s' % (args.splittime)]
     cmd += ['-o']
-    cmd += ['@n-@f']
+    cmd += ['@f-@n']
     cmd += ['%s' % (mp3_file)]
 
     if args.verbose:
@@ -353,3 +358,7 @@ def split_mp3(args, mp3_file):
     except subprocess.CalledProcessError as error:
         print(error.output)
         return
+    
+    # Remove original mp3-file after splitting
+    os.remove(mp3_file)
+

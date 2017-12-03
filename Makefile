@@ -13,6 +13,10 @@ clean-pyc:
 	find . -name '*.pyo' -exec rm --force {} +
 	find . -name '*~' -exec rm --force  {} +
 
+# cleaning untracked and ignored files und directories
+clean:
+	git clean -fdx
+
 check:
 	python3 -m py_compile $(Source)
 	pylint3 --reports=n $(Source)

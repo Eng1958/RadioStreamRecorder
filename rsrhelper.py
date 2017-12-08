@@ -30,8 +30,11 @@ import os
 import re
 import errno
 import subprocess
-from time import strftime, localtime, sleep
+from time import strftime, localtime
 import eyed3
+
+MP3SPLT = '/usr/bin/mp3splt'
+CVLC = '/usr/bin/cvlc'
 
 def print_args(args):
     """
@@ -117,7 +120,7 @@ def set_mp3_tags(mp3_file, args, recording_date, url, icy_tags):
     audiofile.tag.tagging_date = recording_date[:10]
     audiofile.tag.comments.set(os.getenv('USER', '????'), u'User')
     audiofile.tag.comments.set(recording_date, u'Recording Time')
-    comment = '\n'.join(icy_tags)
+    ## comment = '\n'.join(icy_tags)
 
     # audiofile.tag.comments.set(comment, u'ICY-Tags')
     audiofile.tag.comments.set(icy_tags, u'ICY-Tags')
@@ -168,7 +171,7 @@ def create_log(log, args):
 
     file.close()
 
-def list_stations(args):
+def list_stations():
     """
         list all radio stations in settings.ini
     """
@@ -207,8 +210,8 @@ def start_recording(args, recording_directory, streamurl):
 
     recording_date = strftime("%Y-%m-%d_%H-%M", localtime())
     file = '%s-%s-%s-%s' % (args.station, \
-                                recording_date,
-                                args.artist, args.album)
+                            recording_date,
+                            args.artist, args.album)
     file = file.replace(' ', '_')
 
     mp3_file = recording_directory + '/' + file + '.mp3'
@@ -233,9 +236,13 @@ def start_recording_direct(args, mp3_file, log_file, recording_date, streamurl):
     # record the stream now
     remove_cvlc_log(cvlclog)
 
+    if not os.path.exists(CVLC):
+        print('Error: %s is not installed' % (CVLC))
+        return ''
+
     # build command to record a stream with cvlc. Some informatione
     # during recording will be logged in cvlc.log
-    cmd = ['/usr/bin/cvlc']
+    cmd = [CVLC]
     cmd += ['--verbose=2']
     cmd += ['--extraintf=http:logger']
     cmd += ['--file-logging']
@@ -328,7 +335,7 @@ def split_mp3(args, mp3_file):
             an Einzelteilen, die alle die vorgegebene Dauer haben
         -o Ausgabeformat
     """
-    MP3SPLT = '/usr/bin/mp3splt'
+
 
     if not os.path.exists(MP3SPLT):
         return ''
@@ -336,7 +343,8 @@ def split_mp3(args, mp3_file):
     if args.splittime is None:
         return ''
 
-    cmd = ['/usr/bin/mp3splt']
+    ## cmd = ['/usr/bin/mp3splt']
+    cmd = [MP3SPLT]
     cmd += ['-q']
     cmd += ['-a']
     cmd += ['-f']
@@ -358,7 +366,7 @@ def split_mp3(args, mp3_file):
     except subprocess.CalledProcessError as error:
         print(error.output)
         return
-    
+
     # Remove original mp3-file after splitting
     os.remove(mp3_file)
 

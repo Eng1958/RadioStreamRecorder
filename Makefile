@@ -8,12 +8,7 @@ PYTHON=python3
 Source=RadioStreamRecorder.py rsrhelper.py
 
 
-clean-pyc:
-	find . -name '*.pyc' -exec rm --force {} +
-	find . -name '*.pyo' -exec rm --force {} +
-	find . -name '*~' -exec rm --force  {} +
-
-# cleaning untracked and ignored files und directories
+# clean untracked and ignored files und directories
 clean:
 	git clean -fdx
 
@@ -34,8 +29,8 @@ split:
 	./RadioStreamRecorder.py record wdr3 3 --verbose --album "Test-Album" --artist "Test-Artist" --splittime 1.0
 
 help:
-	@echo "    clean-pyc"
-	@echo "        Remove python artifacts."
+	@echo "    clean"
+	@echo "        cleaning untracked and ignored files und directories"
 	@echo "    clean-build"
 	@echo "        Remove build artifacts."
 	@echo "    isort"

@@ -5,7 +5,8 @@
 HOST=127.0.0.1
 TEST_PATH=./
 PYTHON=python3
-Source=RadioStreamRecorder.py rsrhelper.py
+Source=RadioStreamRecorder.py RadioStreamRecorder/rsrhelper.py RadioStreamRecorder/__version__.py
+
 
 
 # clean untracked and ignored files und directories
@@ -15,6 +16,7 @@ clean:
 check:
 	python3 -m py_compile $(Source)
 	pylint3 --reports=n $(Source)
+	./setup.py check
 
 test:
 	find /home/dieter/Musik/Recording/ -name '*Test*' -exec rm --force {} +

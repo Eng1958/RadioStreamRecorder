@@ -9,7 +9,7 @@ __pycache__
 # Distribution / packaging
 build/
 dist/
-
+MANIFEST
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

@@ -51,8 +51,8 @@ setup(
 
     # The project's main homepage.
     url=URL,
-    py_modules=['RadioStreamRecorder',
-                'rsrhelper'],
+    ## py_modules=['RadioStreamRecorder',
+    ##             'rsrhelper'],
     platforms=["Linux"],
     classifiers=["Development Status :: 4 - Beta",
                  "Operating System :: OS Independent",

@@ -20,7 +20,7 @@ check:
 
 test:
 	find /home/dieter/Musik/Recording/ -name '*Test*' -exec rm --force {} +
-	./RadioStreamRecorder.py record wdr3 1 --verbose --album "Test-Album" --artist "Test-Artist"
+	RadioStreamRecorder/RadioStreamRecorder.py record wdr3 1 --verbose --album "Test-Album" --artist "Test-Artist"
 
 at:
 	find /home/dieter/Musik/Recording/ -name '*Test*' -exec rm --force {} +

@@ -55,9 +55,10 @@ setup(
     ##             'rsrhelper'],
     platforms=["Linux"],
     classifiers=["Development Status :: 4 - Beta",
-                 "Operating System :: OS Independent",
+                 'Operating System :: POSIX :: Linux',
                  "Programming Language :: Python",
+                 'Programming Language :: Python :: 3.4'
                 ],
-    scripts=['bin/RadioStreamRecorder']
-
+    scripts=['bin/RadioStreamRecorder'],
+    data_files=[('.', ['settings.ini'])]
     )

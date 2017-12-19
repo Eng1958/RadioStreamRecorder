@@ -60,5 +60,6 @@ setup(
                  'Programming Language :: Python :: 3.4'
                 ],
     scripts=['bin/RadioStreamRecorder'],
-    data_files=[('.', ['settings.ini'])]
+     # In this case, 'data_file' will be installed into '<sys.prefix>/tmp'
+    data_files=[('tmp', ['settings.ini'])]
     )

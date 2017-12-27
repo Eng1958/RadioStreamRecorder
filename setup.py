@@ -17,7 +17,7 @@ from distutils.core import setup
 
 # Package meta-data.
 NAME = 'RadioStreamRecorder'
-DESCRIPTION = 'Record inernet radio'
+DESCRIPTION = 'Record internet radio'
 URL = 'https://github.com/Eng1958/RadioStreamRecorder'
 EMAIL = 'dieter@engemann.me'
 AUTHOR = 'Dieter Engemann'
@@ -48,7 +48,6 @@ setup(
     maintainer=AUTHOR,
     maintainer_email=EMAIL,
     packages=['RadioStreamRecorder'],
-
     # The project's main homepage.
     url=URL,
     ## py_modules=['RadioStreamRecorder',
@@ -57,9 +56,11 @@ setup(
     classifiers=["Development Status :: 4 - Beta",
                  'Operating System :: POSIX :: Linux',
                  "Programming Language :: Python",
-                 'Programming Language :: Python :: 3.4'
+                 'Programming Language :: Python :: 3.4',
+                 'Topic :: Multimedia',
+                 'Topic :: Multimedia :: Sound/Audio'
                 ],
     scripts=['bin/RadioStreamRecorder'],
      # In this case, 'data_file' will be installed into '<sys.prefix>/tmp'
-    data_files=[('tmp', ['settings.ini'])]
+    data_files=[('', ['settings.ini'])]
     )

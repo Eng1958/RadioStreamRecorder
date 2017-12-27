@@ -16,11 +16,11 @@ clean:
 check:
 	python3 -m py_compile $(Source)
 	pylint3 --reports=n $(Source)
-	./setup.py check
+	./setup.py check~/.local/lib/python3.5/site-packages/RadioStreamRecorder
 
 test:
 	find /home/dieter/Musik/Recording/ -name '*Test*' -exec rm --force {} +
-	./RadioStreamRecorder.py record wdr3 1 --verbose --album "Test-Album" --artist "Test-Artist"
+	RadioStreamRecorder/RadioStreamRecorder.py record wdr3 1 --verbose --album "Test-Album" --artist "Test-Artist"
 
 at:
 	find /home/dieter/Musik/Recording/ -name '*Test*' -exec rm --force {} +
@@ -29,6 +29,13 @@ at:
 split:
 	find /home/dieter/Musik/Recording/ -name '*Test*' -exec rm --force {} +
 	./RadioStreamRecorder.py record wdr3 3 --verbose --album "Test-Album" --artist "Test-Artist" --splittime 1.0
+install:
+	./setup.py install --user
+	ls -lsa ~/.local/bin
+	ls -lsa ~/.local/lib/python3.5/site-packages/RadioStreamRecorder
+	ls -lsa ~/.local/
+tag:
+	git tag $$(python setup.py --version)
 
 help:
 	@echo "    clean"

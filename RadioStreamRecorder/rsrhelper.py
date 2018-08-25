@@ -31,10 +31,14 @@ import re
 import errno
 import subprocess
 from time import strftime, localtime
-import eyed3
+try:
+    import eyed3
+except ImportError:
+    print('eyed3 is not installed, please install it!')
+    sys.exit(1)
 
-MP3SPLT = '/usr/bin/mp3splt'
-CVLC = '/usr/bin/cvlc'
+## MP3SPLT = '/usr/bin/mp3splt'
+## CVLC = '/usr/bin/cvlc'
 
 def print_args(args):
     """
@@ -202,7 +206,7 @@ def icy_tag(log):
         return '\n'.join(icy_list)
         ### return icy_list
 
-def start_recording(args, recording_directory, streamurl):
+def start_recording(args, recording_directory, streamurl, mp3splitter, recorder):
     """
         start recording directly or at a later time with a little help
         from the at-command
@@ -221,13 +225,13 @@ def start_recording(args, recording_directory, streamurl):
         print(log_file)
 
     if args.recordingtime is None:
-        start_recording_direct(args, mp3_file, log_file, recording_date, streamurl)
+        start_recording_direct(args, mp3_file, log_file, recording_date, streamurl, recorder, mp3splitter)
 
     else:
         start_recording_by_time(args)
 
 
-def start_recording_direct(args, mp3_file, log_file, recording_date, streamurl):
+def start_recording_direct(args, mp3_file, log_file, recording_date, streamurl, recorder, mp3splitter):
     """
         start recording directly
     """
@@ -236,13 +240,13 @@ def start_recording_direct(args, mp3_file, log_file, recording_date, streamurl):
     # record the stream now
     remove_cvlc_log(cvlclog)
 
-    if not os.path.exists(CVLC):
-        print('Error: %s is not installed' % (CVLC))
+    if not os.path.exists(recorder):
+        print('Error: %s is not installed' % (recorder))
         return ''
 
     # build command to record a stream with cvlc. Some informatione
     # during recording will be logged in cvlc.log
-    cmd = [CVLC]
+    cmd = [recorder]
     cmd += ['--verbose=2']
     cmd += ['--extraintf=http:logger']
     cmd += ['--file-logging']
@@ -274,7 +278,7 @@ def start_recording_direct(args, mp3_file, log_file, recording_date, streamurl):
         print(out)
         add_to_log(out, log_file)
 
-        out = split_mp3(args, mp3_file)
+        out = split_mp3(args, mp3_file, mp3splitter)
         print(out)
         add_to_log(out, log_file)
 
@@ -321,7 +325,7 @@ def add_to_log(eyed3_output, log):
     file.write(eyed3_output)
     file.close()
 
-def split_mp3(args, mp3_file):
+def split_mp3(args, mp3_file, mp3splitter):
     """Splits the recorded mp3 file into smaller pieces. Using mp3splt
 
         mp3splt -a -f -t 15.0 -o "@n-@f" -f blabla.mp3
@@ -337,14 +341,13 @@ def split_mp3(args, mp3_file):
     """
 
 
-    if not os.path.exists(MP3SPLT):
+    if not os.path.exists(mp3splitter):
         return ''
 
     if args.splittime is None:
         return ''
 
-    ## cmd = ['/usr/bin/mp3splt']
-    cmd = [MP3SPLT]
+    cmd = [mp3splitter]
     cmd += ['-q']
     cmd += ['-a']
     cmd += ['-f']

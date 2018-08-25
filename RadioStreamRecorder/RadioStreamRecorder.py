@@ -22,6 +22,12 @@
     I found a lot of help with this tag example
         https://github.com/nicfit/eyed3/blob/master/examples/tag_example.py
 
+    You have to install the following modules and external applications
+    1.  pip3 install eyed3
+    2.  sudo apt-get install mp3splt
+    3.  sudo apt-get install vlc
+    4.  sudo apt-get install at
+
 """
 
 import argparse
@@ -41,27 +47,60 @@ def radio_stream_recording(args):
 
     print("Radio Stream-Recorder")
 
-    streamurl = ''
-
     rsrhelper.print_args(args)
 
+    recording_directory, streamurl, mp3splitter, recorder = config(args.station)
+
+    rsrhelper.start_recording(args, recording_directory, streamurl, mp3splitter, recorder)
+
+
+
+def config(station):
+    """
+        returns: recording_directory, streamurl, mp3splitter, recorder
+    """
     settings = rsrhelper.read_settings()
+
+    # get MP3-Splitter
+    try:
+        mp3splitter = settings['GLOBAL']['MP3SPLT']
+        if not os.path.isfile(mp3splitter):
+            print('Warning: Mp3-Splitter [%s] doesn\'t exist' % (mp3splitter))
+            sys.exit(1)
+        else:
+            print('Using Mp3-Splitter [%s]' % (mp3splitter))
+    except KeyError:
+        print('Warning: No Mp3-Splitter defined')
+        pass
+
+    # get vlc for recording
+    try:
+        recorder = settings['GLOBAL']['CVLC']
+        if not os.path.isfile(recorder):
+            print('Error: Recorder [%s] doesn\'t exist' % (recorder))
+            sys.exit(1)
+        else:
+            print('Using Recorder [%s]' % (recorder))
+    except KeyError:
+        print('Error: No Recorder defined')
+        pass
+
 
     # get radio station
     try:
-        streamurl = settings['STATIONS'][args.station]
-        if args.verbose:
-            print('Streaming-URL: %s' % (streamurl))
+        streamurl = settings['STATIONS'][station]
+#        if args.verbose:
+        print('Streaming-URL: %s' % (streamurl))
     except KeyError:
-        print('Unkown station name: ' + args.station)
+        print('Error: Unkown station name: ' + station)
         sys.exit()
 
     # get target_dir for recorded file
     try:
         recording_directory = os.path.expandvars(
             settings['GLOBAL']['target_dir'])
-        if args.verbose:
-            print('Recording directory: %s' % (recording_directory))
+#        if args.verbose:
+        print('Recording directory: %s' % (recording_directory))
     except KeyError:
         print('Unkown Recording directoy: ')
         sys.exit()
@@ -76,7 +115,7 @@ def radio_stream_recording(args):
                 raise
         exit(1)
 
-    rsrhelper.start_recording(args, recording_directory, streamurl)
+    return recording_directory, streamurl, mp3splitter, recorder
 
 
 def main():
